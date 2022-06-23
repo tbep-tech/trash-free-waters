@@ -21,7 +21,11 @@ register_google(google_key)
 whitebox::wbt_init()
 
 # from here https://www.fgdl.org/metadataexplorer/explorer.jsp
-dem <- raster('~/Desktop/usgsdem1.tif')
+# note that the crs was not immediately obvious, so I imported the original into ArcGIS and exported as tiff
+# the crs was then applied
+# it 92m cell size, maybe 5m here? https://www.fgdl.org/metadata/fgdc_xml/flidar_mosaic_m.shp.xml
+# dem <- raster('~/Desktop/usgsdem1.tif')
+dem <- raster('~/Desktop/Topobathy_SPW1.tif')
 
 # https://vt-hydroinformatics.github.io/rgeowatersheds.html
 
@@ -64,31 +68,87 @@ locs <- fromJSON(url, flatten = T) %>%
     lon = ifelse(grepl('BayboroMarina', Site), -82.63635, lon) 
   )
 
+## expanded bounding box for locations used to clip raster
 locstmp <- locs %>% 
   filter(!is.na(lon)) %>% 
   st_as_sf(coords = c('lon', 'lat'), crs = 4326)
 
 bbox <- st_bbox(locstmp) %>% 
   st_as_sfc %>%
-  st_buffer(dist = set_units(0.5, degree)) %>%
+  st_buffer(dist = set_units(0.3, degree)) %>%
   st_bbox %>% 
   st_as_sfc() %>% 
   st_transform(crs = crs(dem)) %>% 
   as_Spatial()
 
-demcrp <- crop(dem, bbox)
-writeRaster(demcrp, '~/Desktop/demcrp.tif', options=c('TFW=YES'))
+demcrp <- dem#crop(dem, bbox)
+
+writeRaster(demcrp, here('data/GIS/demcrp.tif'), options=c('TFW=YES'), overwrite = T)
 
 tm_shape(demcrp)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE)+
   tm_scale_bar()
 
-wbt_hillshade(dem = '~/Desktop/demcrp.tif',
-              output = "~/Desktop/brush_hillshade.tif",
+##
+# create hillshade
+
+wbt_hillshade(dem = here('data/GIS/demcrp.tif'),
+              output = here('data/GIS/demcrp_hillshade.tif'),
               azimuth = 115)
 
-hillshade <- raster("~/Desktop/brush_hillshade.tif")
+hillshade <- raster(here('data/GIS/demcrp_hillshade.tif'))
 
 tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
   tm_scale_bar()
+
+##
+# fill holes
+
+wbt_fill_single_cell_pits(
+  dem = here('data/GIS/demcrp.tif'),
+  output = here('data/GIS/demcrp_nopits.tif')
+)
+
+wbt_breach_depressions_least_cost(
+  dem = here('data/GIS/demcrp_nopits.tif'),
+  output = here('data/GIS/demcrp_breached_nopits.tif'),
+  dist = 5,
+  fill = TRUE)
+
+wbt_fill_depressions_wang_and_liu(
+  dem = here('data/GIS/demcrp_breached_nopits.tif'),
+  output = here('data/GIS/demcrp_filled_breached_nopits.tif')
+)
+
+demcrp_filled_breached <- raster(here('data/GIS/demcrp_filled_breached_nopits.tif'))
+tm_shape(demcrp_filled_breached)+
+  tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
+  tm_scale_bar()
+
+##
+# create flow accumulation and pointer grid
+
+wbt_d8_flow_accumulation(input = here('data/GIS/demcrp_filled_breached_nopits.tif'),
+                         output = here('data/GIS/D8FA.tif'))
+
+wbt_d8_pointer(dem = here('data/GIS/demcrp_filled_breached_nopits.tif'),
+               output = here('data/GIS/D8pointer.tif'))
+
+##
+# create pour points
+
+ppointsSP <- locstmp %>% 
+  st_transform(crs = crs(dem)) %>% 
+  as_Spatial()
+shapefile(ppointsSP, filename = here('data/GIS/pourpoints.shp'), overwrite = TRUE)
+
+##
+# extract streams from raster
+
+wbt_extract_streams(flow_accum = here('data/GIS/D8FA.tif'),
+                    output = here('data/GIS/raster_streams.tif'),
+                    threshold = 6000)
+
+raster_streams <- raster(here('data/GIS/raster_streams.tif'))
+mapview(raster_streams)
