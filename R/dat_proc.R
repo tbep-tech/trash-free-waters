@@ -28,7 +28,10 @@ locs <- fromJSON(url, flatten = T) %>%
     City = city,
     County = county
     ) %>%
-  mutate(Site = gsub('\r\n$', '', Site)) %>% 
+  mutate(
+    Site = gsub('\r\n$', '', Site), 
+    County = gsub('\\sCounty$', '', County)
+    ) %>% 
   unite('fulladdress', Address, City, sep = ', ', remove = F) %>% 
   left_join(locsinit, by = 'Site') %>% 
   nest(latlon = c('lon', 'lat')) %>% 
@@ -76,6 +79,7 @@ evnt <- jsn %>%
   ) %>% 
   mutate(
     Site = gsub('\r\n$', '', Site), 
+    Date = gsub('^0021', '2021', Date),
     Date = as.Date(Date), 
     dataCards = map(dataCards, function(x){
       if(length(x) > 0)

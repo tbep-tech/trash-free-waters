@@ -5,11 +5,12 @@ css: styles.css
 ---
 
 ```{r setup, message = F, warning = F, results = 'hide', echo = FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, echo = F, fig.path = 'figs/')
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, echo = F, fig.path = 'figs/', fig.align = 'center')
 
 library(tidyverse)
 library(downloadthis)
 library(here)
+library(shiny)
 library(showtext)
 
 data(tfwdat)
@@ -28,5 +29,45 @@ source(here('R/figs.R'))
 # {.tabset .tabset-fade .tabset-pills}
 
 ## Summary 
+
+```{r}
+column(12, 
+  column(3, 
+    download_file(
+      path = here('figs/totlbs.jpg'),
+      output_name = "total-summary",
+      output_extension = ".jpg",
+      button_label = "Download plot",
+      button_type = "warning",
+      has_icon = TRUE,
+      icon = "fa fa-save"
+      )
+  )
+)
+```
+
+```{r, out.width = '80%'}
+knitr::include_graphics(here('figs/totlbs.jpg'))
+```
+
+```{r}
+column(12, 
+  column(3, 
+    download_file(
+      path = here('figs/totlbscos.jpg'),
+      output_name = "total-summary-counties",
+      output_extension = ".jpg",
+      button_label = "Download plot",
+      button_type = "warning",
+      has_icon = TRUE,
+      icon = "fa fa-save"
+      )
+  )
+)
+```
+
+```{r, out.width = '80%'}
+knitr::include_graphics(here('figs/totlbscos.jpg'))
+```
 
 <script type="text/javascript" src="js/iframeResizer.contentWindow.min.js"></script>
