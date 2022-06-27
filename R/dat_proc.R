@@ -57,6 +57,8 @@ locs <- fromJSON(url, flatten = T) %>%
 #   filter(!is.na(lon)) %>% 
 #   st_as_sf(coords = c('lon', 'lat'), crs = 4326)
 
+save(locs, file = here('data/locs.RData'))
+
 ##
 # complete event data
 url <- 'https://dev.tampabay.wateratlas.usf.edu/trash-free-waters/publicapi/cleanupevents?eventState=Complete'

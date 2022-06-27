@@ -12,8 +12,12 @@ library(downloadthis)
 library(here)
 library(shiny)
 library(showtext)
+library(leaflet)
+library(crosstalk)
+library(DT)
 
 data(tfwdat)
+data(locs)
 
 # get font
 font_add_google("Roboto", "roboto")#, regular = 'C:/Windows/Fonts/Roboto.ttf')
@@ -28,7 +32,17 @@ source(here('R/figs.R'))
 
 # {.tabset .tabset-fade .tabset-pills}
 
+## Locations
+
+The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.  
+
+```{r}
+map_fun(locs, tfwdat)
+```
+
 ## Summary 
+
+These plots show the total weight of litter and debris as trash or recyclables that were collected to date for all sites.  Litter includes those items that can be assigned to a category using the [ETAP method](https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"} and debris defines those items without a category (usually large, specific items). 
 
 ```{r}
 column(12, 
