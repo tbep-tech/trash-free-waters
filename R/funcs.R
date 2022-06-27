@@ -15,9 +15,9 @@ map_fun <- function(locs, tfwdat){
     left_join(sitsum, by = 'Site') %>% 
     mutate(
       nevnt = ifelse(is.na(nevnt), 0, nevnt), 
-      lab = paste0("<b>Site</b>: ", Site, '<br/><b>County</b>: ', County, '<br/><b>Number of events</b>: ', nevnt),
-      lab = lapply(lab, HTML), 
-      totlbs = round(totlbs, 1)
+      totlbs = round(totlbs, 1),
+      lab = paste0("<b>Site</b>: ", Site, '<br/><b>County</b>: ', County, '<br/><b>Number of events</b>: ', nevnt, '<br/><b>Total (lbs)</b>: ', totlbs),
+      lab = lapply(lab, HTML)
     ) %>% 
     select(Site, County, `Number of events` = nevnt, `Total (lbs)` = totlbs, lab, lon, lat)
   
