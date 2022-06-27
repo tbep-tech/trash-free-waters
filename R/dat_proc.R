@@ -1,4 +1,3 @@
-
 library(jsonlite)
 library(tibble)
 library(tidyverse)
@@ -6,8 +5,8 @@ library(readxl)
 library(here)
 library(ggmap)
 library(sf)
-library(mapview)
 library(purrr)
+library(lubridate)
 
 google_key <- Sys.getenv('google_key')
 register_google(google_key)
@@ -51,35 +50,50 @@ locs <- fromJSON(url, flatten = T) %>%
     lon = ifelse(grepl('BayboroMarina', Site), -82.63635, lon) 
   )
 
-tmp <- locs %>% 
-  filter(!is.na(lon)) %>% 
-  st_as_sf(coords = c('lon', 'lat'), crs = 4326)
+# tmp <- locs %>% 
+#   filter(!is.na(lon)) %>% 
+#   st_as_sf(coords = c('lon', 'lat'), crs = 4326)
 
-
-
+##
 # complete event data
-url <- 'https://dev.tampabay.wateratlas.usf.edu/trash-free-waters/api/cleanupevents?eventState=Complete'
+url <- 'https://dev.tampabay.wateratlas.usf.edu/trash-free-waters/publicapi/cleanupevents?eventState=Complete'
 jsn <- fromJSON(url, flatten = T)
 
 evnt <- jsn %>%
+  as_tibble() %>% 
   select(
     Date = eventDate, 
     DeviceID = collectionDeviceId, 
     Org = organization.orgName,
     Site = location.name, 
-    LitterRecyclablesVolumeL = litter_Recycleables.volume, 
-    LitterRecyclablesBags = litter_Recycleables.bags,
+    # LitterRecyclablesVolumeL = litter_Recycleables.volume, 
     LitterRecyclablesWeightLb = litter_Recycleables.weight,
-    LitterTrashVolumeL = litter_Trash.volume,
-    LitterTrashBags = litter_Trash.bags,
+    # LitterTrashVolumeL = litter_Trash.volume,
     LitterTrashWeightLb = litter_Trash.weight, 
     DebrisRecyclablesWeightLb = debris_Recycleables.weight,
-    DebrisTrashWeightLb = debris_Trash.weight
+    DebrisTrashWeightLb = debris_Trash.weight,
+    dataCards
   ) %>% 
-  mutate(Site = gsub('\r\n$', '', Site))
+  mutate(
+    Site = gsub('\r\n$', '', Site), 
+    Date = as.Date(Date), 
+    dataCards = map(dataCards, function(x){
+      if(length(x) > 0)
+        x %>% 
+          select(itemName) %>% 
+          mutate(
+            itemName = ifelse(!grepl(' > ', itemName), paste('WriteIn >', itemName), itemName)
+          ) %>% 
+          separate(itemName, into = c('item1', 'item2'), sep = ' > ', remove = T)
+    }), 
+    Org = gsub('\\s+$', '', Org)
+  )
 
+##
+# combine location and event data
 
+tfwdat <- evnt %>% 
+  left_join(locs, by = 'Site') %>% 
+  select(-fulladdress, -Address)
 
-
-
-
+save(tfwdat, file = here('data/tfwdat.RData'))
