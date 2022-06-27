@@ -86,11 +86,16 @@ evnt <- jsn %>%
     dataCards = map(dataCards, function(x){
       if(length(x) > 0)
         x %>% 
-          select(itemName) %>% 
+          select(itemName, itemCondition.intactCount, itemCondition.partialIntactCount, itemCondition.degradedCount) %>% 
           mutate(
-            itemName = ifelse(!grepl(' > ', itemName), paste('WriteIn >', itemName), itemName)
+            itemName = ifelse(!grepl(' > ', itemName), paste('WriteIn >', itemName), itemName), 
           ) %>% 
-          separate(itemName, into = c('item1', 'item2'), sep = ' > ', remove = T)
+          separate(itemName, into = c('item1', 'item2'), sep = ' > ', remove = T) %>% 
+          rowwise() %>% 
+          mutate(
+            itemcnt = sum(itemCondition.intactCount, itemCondition.partialIntactCount, itemCondition.degradedCount, na.rm = T)
+          ) %>% 
+          select(item1, item2, itemcnt)
     }), 
     Org = gsub('\\s+$', '', Org)
   )

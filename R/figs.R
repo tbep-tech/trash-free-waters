@@ -137,3 +137,76 @@ jpeg(here('figs/totlbscos.jpg'), height = 9, width = 8, family = fml, units = 'i
 print(p)
 dev.off()
 
+# card data ---------------------------------------------------------------
+
+library(tidyverse)
+
+data(tfwdat)
+
+crddat <- tfwdat %>% 
+  select(Site, Date, dataCards) %>% 
+  unnest('dataCards') %>% 
+  filter(item1 != 'WriteIn') %>% 
+  mutate(
+    item1 = factor(item1, levels = c('Plastic', 'Paper', 'Metal', 'Glass', 'Other'))
+  )
+
+# toplo1 <- crddat %>% 
+#   group_by(Site, item1) %>% 
+#   summarise(
+#     cnt = sum(itemcnt) / length(unique(Date)), 
+#     .groups = 'drop'
+#   ) %>% 
+#   mutate(item1 = factor(item1, levels = rev(levels(item1))))
+
+toplo2 <- crddat %>% 
+  group_by(Site, item1, item2) %>% 
+  summarise(
+    cnt = sum(itemcnt) / length(unique(Date)), 
+    .groups = 'drop'
+  ) %>% 
+  mutate(item2 = factor(item2, levels = rev(sort(unique(item2)))))
+
+cols <- c('#958984', '#427355', '#00806E', '#004F7E')
+
+# p1 <- ggplot(toplo1, aes(x = Site, y = item1)) + 
+#   geom_tile(aes(fill = cnt), color = 'black') +
+#   scale_fill_gradientn(colors = cols) +
+#   scale_x_discrete(expand = c(0, 0)) + 
+#   scale_y_discrete(expand = c(0, 0)) + 
+#   facet_grid(~Site, space = 'free', scales = 'free') + 
+#   theme_bw() +
+#   theme(
+#     axis.text.x = element_text(angle = 20, hjust = 1, size = 8),
+#     panel.grid = element_blank(),
+#     strip.text = element_blank()
+#   ) +
+#   labs(
+#     fill = 'Avg cnt / event'
+#   )
+
+p2 <- ggplot(toplo2, aes(x = Site, y = item2)) + 
+  geom_tile(aes(fill = cnt), color = 'black') +
+  geom_text(aes(label = round(cnt, 1)), size = 2) + 
+  scale_fill_gradientn(colors = cols) +
+  scale_x_discrete(expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0)) +
+  facet_grid(item1 ~Site, scales = 'free', space = 'free', switch = 'y') + 
+  theme_bw() + 
+  theme(
+    axis.text.x = element_text(angle = 20, hjust = 1, size = 10), 
+    panel.grid = element_blank(), 
+    strip.placement = 'outside', 
+    # legend.position = 'none',
+    strip.background = element_blank(), 
+    strip.text.y = element_text(angle = 90), 
+    strip.text.x = element_blank()
+  ) + 
+  labs(
+    y = NULL, 
+    fill = 'Avg cnt / event'
+  )
+
+jpeg(here('figs/cardplo.jpg'), height = 9, width = 8, family = fml, units = 'in', res = 400)
+print(p2)
+dev.off()
