@@ -32,6 +32,8 @@ source(here('R/figs.R'))
 
 # {.tabset .tabset-fade .tabset-pills}
 
+Site last updated `r Sys.Date()`
+
 ## Locations
 
 The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.  
