@@ -1,22 +1,32 @@
 library(jsonlite)
 library(tibble)
 library(tidyverse)
-library(readxl)
 library(here)
 library(ggmap)
 library(sf)
 library(purrr)
 library(lubridate)
+library(googlesheets4)
+library(googledrive)
 
 google_key <- Sys.getenv('google_key')
 register_google(google_key)
 
+gs4_deauth()
+
 ##
 # location meta
 
-# site id from original file from SS
-locsinit <- read_excel(here('data/raw/Site List (1).xlsx')) %>% 
-  select(Site = Name, lon = Long, lat = Lat)
+# site id from Google Drive
+# https://docs.google.com/spreadsheets/d/1LJ20HgCeN5lkgYITKGidrOXevVOEkqurf9z6tLQ-PU4/edit#gid=1663489699
+locsinit <- read_sheet('1LJ20HgCeN5lkgYITKGidrOXevVOEkqurf9z6tLQ-PU4') %>% 
+  select(Site = `Site ID`, lon = Long, lat = Lat, device = `Device Type`) %>% 
+  mutate(
+    device = case_when(
+      grepl('^Originally', device) ~ 'Litter Gitter/Boom', 
+      T ~ device
+    )
+  )
 
 # locations
 url <- 'https://dev.tampabay.wateratlas.usf.edu/trash-free-waters/api/locations'
