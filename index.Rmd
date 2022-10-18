@@ -34,80 +34,114 @@ source(here('R/figs.R'))
 
 Site last updated `r Sys.Date()`
 
-## Locations
+<!-- ## Locations -->
 
-The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.  
+<!-- The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.   -->
+
+<!-- ```{r} -->
+<!-- map_fun(locs, tfwdat) -->
+<!-- ``` -->
+
+<!-- ## Summaries {.tabset .tabset-fade} -->
+
+<!-- ### Totals  -->
+
+<!-- These plots show the total weight of litter and debris as trash or recyclables that were collected to date for all sites.  Litter includes those items that can be assigned to a category using the [ETAP method](https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"} and debris defines those items without a category (usually large, specific items).  -->
+
+<!-- ```{r} -->
+<!-- column(12,  -->
+<!--   column(3,  -->
+<!--     download_file( -->
+<!--       path = here('figs/totlbs.jpg'), -->
+<!--       output_name = "total-summary", -->
+<!--       output_extension = ".jpg", -->
+<!--       button_label = "Download plot", -->
+<!--       button_type = "warning", -->
+<!--       has_icon = TRUE, -->
+<!--       icon = "fa fa-save" -->
+<!--       ) -->
+<!--   ) -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- ```{r, out.width = '80%'} -->
+<!-- knitr::include_graphics(here('figs/totlbs.jpg')) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- column(12,  -->
+<!--   column(3,  -->
+<!--     download_file( -->
+<!--       path = here('figs/totlbscos.jpg'), -->
+<!--       output_name = "total-summary-counties", -->
+<!--       output_extension = ".jpg", -->
+<!--       button_label = "Download plot", -->
+<!--       button_type = "warning", -->
+<!--       has_icon = TRUE, -->
+<!--       icon = "fa fa-save" -->
+<!--       ) -->
+<!--   ) -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- ```{r, out.width = '80%'} -->
+<!-- knitr::include_graphics(here('figs/totlbscos.jpg')) -->
+<!-- ``` -->
+
+<!-- ### Totals by site -->
+
+<!-- This plot shows the type of litter and debris counted at each site and event.  The summaries show the total count divided by the number of events at each site, with colors showing the magnitude. -->
+
+<!-- ```{r} -->
+<!-- column(12,  -->
+<!--   column(3,  -->
+<!--     download_file( -->
+<!--       path = here('figs/cardplo.jpg'), -->
+<!--       output_name = "inventory", -->
+<!--       output_extension = ".jpg", -->
+<!--       button_label = "Download plot", -->
+<!--       button_type = "warning", -->
+<!--       has_icon = TRUE, -->
+<!--       icon = "fa fa-save" -->
+<!--       ) -->
+<!--   ) -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- knitr::include_graphics(here('figs/cardplo.jpg')) -->
+<!-- ``` -->
+
+## Site data
 
 ```{r}
-map_fun(locs, tfwdat)
-```
+tab <- tfwdat %>%
+  unite('sitedate', Site, Date, sep = ' - ') %>%   
+  select(sitedate, dataCards) %>% 
+  unnest('dataCards') %>% 
+  arrange(sitedate, item1, item2, itemcnt) %>%
+  select(item1, item2, itemcnt, sitedate)
+totab <- SharedData$new(tab)
 
-## Summary 
-
-These plots show the total weight of litter and debris as trash or recyclables that were collected to date for all sites.  Litter includes those items that can be assigned to a category using the [ETAP method](https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"} and debris defines those items without a category (usually large, specific items). 
-
-```{r}
-column(12, 
-  column(3, 
-    download_file(
-      path = here('figs/totlbs.jpg'),
-      output_name = "total-summary",
-      output_extension = ".jpg",
-      button_label = "Download plot",
-      button_type = "warning",
-      has_icon = TRUE,
-      icon = "fa fa-save"
-      )
+bscols(
+  list(
+    filter_select(id = "filter1", label = "Select site and date", sharedData = totab, group = ~sitedate, multiple = F),
+  datatable(totab, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F,
+            options=list(deferRender=TRUE, scrollY=300, scroller=TRUE, dom = 'ltp',
+                         columnDefs = list(list(visible = F, targets = 3))
+                         ), 
+            colnames = c('Item 1', 'Item 2', 'Count', 'sitedate')
+    )
   )
 )
 ```
 
-```{r, out.width = '80%'}
-knitr::include_graphics(here('figs/totlbs.jpg'))
-```
 
-```{r}
-column(12, 
-  column(3, 
-    download_file(
-      path = here('figs/totlbscos.jpg'),
-      output_name = "total-summary-counties",
-      output_extension = ".jpg",
-      button_label = "Download plot",
-      button_type = "warning",
-      has_icon = TRUE,
-      icon = "fa fa-save"
-      )
-  )
-)
-```
-
-```{r, out.width = '80%'}
-knitr::include_graphics(here('figs/totlbscos.jpg'))
-```
-
-## Inventory
-
-This plot shows the type of litter and debris counted at each site and event.  The summaries show the total count divided by the number of events at each site, with colors showing the magnitude.
-
-```{r}
-column(12, 
-  column(3, 
-    download_file(
-      path = here('figs/cardplo.jpg'),
-      output_name = "inventory",
-      output_extension = ".jpg",
-      button_label = "Download plot",
-      button_type = "warning",
-      has_icon = TRUE,
-      icon = "fa fa-save"
-      )
-  )
-)
-```
-
-```{r}
-knitr::include_graphics(here('figs/cardplo.jpg'))
+```{js}
+function filter_default() {
+    document.getElementById("filter1").getElementsByClassName("selectized")[0].selectize.setValue("HC_SB_Cotanchobee - 2021-06-29", false);
+}
+window.onload = filter_default;
 ```
 
 <script type="text/javascript" src="js/iframeResizer.contentWindow.min.js"></script>
