@@ -29,8 +29,10 @@ map_fun <- function(locs, tfwdat){
       addMarkers(lng = ~lon, lat = ~lat, label = ~lab),
     datatable(sd, extensions="Scroller", style="bootstrap", class="compact", width="100%", rownames = F,
               options=list(deferRender=TRUE, scrollY=300, scroller=F, dom = 'ltp',
-                           columnDefs = list(list(visible=FALSE, 
-                                                  targets=c(4, 5, 6)))
+                           columnDefs = list(
+                             list(visible=FALSE, targets=c(4, 5, 6)),
+                             list(className = 'dt-left', targets = '_all')
+                             )
               ))
   ))
   
