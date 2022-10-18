@@ -36,7 +36,9 @@ Site last updated `r Sys.Date()`
 
 ## Locations
 
-The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.
+The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.  
+
+All litter and debris were sampled using the [ETAP method]((https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"}). Litter includes items that can be assigned to an ETAP category and debris includes items without a category (usually large, specific items).  For each site and date, only a subset of litter and debris is categorized if the total amount collected exceeds two bags. ETAP provides an overview of the ratios of each type of material found at a site, whereas The total weight is the weight of all the litter and debris found in the device at the collection date.
 
 ```{r}
 map_fun(locs, tfwdat)
@@ -46,7 +48,7 @@ map_fun(locs, tfwdat)
 
 ### Totals
 
-These plots show the total weight of litter and debris as trash or recyclables that were collected to date for all sites.  Litter includes those items that can be assigned to a category using the [ETAP method](https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"} and debris defines those items without a category (usually large, specific items).
+These plots show summaries of the total weight of litter and debris as trash or recyclables that were collected to date for all sites.
 
 ```{r}
 column(12,
@@ -90,7 +92,7 @@ knitr::include_graphics(here('figs/totlbscos.jpg'))
 
 ### Totals by site
 
-This plot shows the type of litter and debris counted at each site and event.  The summaries show the total count divided by the number of events at each site, with colors showing the magnitude.
+This plot shows the type of litter and debris counted at each site and event.  The summaries show the total count divided by the number of events at each site, with colors showing the magnitude. Note that reported counts at a site are from a subset of the total bags collected at a site and date if more than two bags were collected.  The tables provides an overview of the types and not quantities.  
 
 ```{r}
 column(12,
@@ -114,7 +116,7 @@ knitr::include_graphics(here('figs/cardplo.jpg'))
 
 ## Site data
 
-These table show the trash and debris collected at a site for a given date.  The first table shows counts by category using the [ETAP method]((https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"}) and the second tables shows the weights by category.  Litter includes those items that can be assigned to a category using the ETAP method and debris defines those items without a category (usually large, specific items).
+These tables show the litter and debris collected at a site for a given date.  The first table shows counts by category using the [ETAP method]((https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"}) and the second table shows the total pounds by category.  Note that counts in the first table are from a subset of the total bags collected at a site and date if more than two bags were collected, whereas the total weights in the second table include all the litter and debris collected.
 
 ```{r}
 tab1 <- tfwdat %>%
@@ -133,7 +135,7 @@ bscols(
   list(
     filter_select(id = "filter1", label = "Select site and date", sharedData = totab1, group = ~sitedate, multiple = F),
   datatable(totab1, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Items found', 
-            options=list(deferRender=TRUE, scrollY=400, scroller=TRUE,
+            options=list(scrollY=400, scroller=TRUE,
                          columnDefs = list(
                            list(visible = F, targets = 3),
                            list(className = 'dt-left', targets = '_all')
@@ -141,7 +143,7 @@ bscols(
                          ), 
             colnames = c('Item 1', 'Item 2', 'Count', 'sitedate')),
   datatable(totab2, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Total pounds by category', 
-            options=list(deferRender=TRUE, scrollY=300, scroller=TRUE, dom = 'ltp',
+            options=list(scrollY=300, scroller=TRUE, dom = 'ltp',
                          columnDefs = list(
                            list(visible = F, targets = 4), 
                            list(className = 'dt-left', targets = '_all')
