@@ -131,28 +131,24 @@ tab2 <- tfwdat %>%
 totab1 <- SharedData$new(tab1, ~sitedate, group = 'choose site date')
 totab2 <- SharedData$new(tab2, ~sitedate, group = 'choose site date')
 
-bscols(
-  list(
-    filter_select(id = "filter1", label = "Select site and date", sharedData = totab1, group = ~sitedate, multiple = F),
-  datatable(totab1, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Items found', 
+filter_select(id = "filter1", label = "Select site and date", sharedData = totab1, group = ~sitedate, multiple = F)#,
+datatable(totab1, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Items found', 
             options=list(scrollY=400, scroller=TRUE,
                          columnDefs = list(
                            list(visible = F, targets = 3),
                            list(className = 'dt-left', targets = '_all')
                            )
                          ), 
-            colnames = c('Item 1', 'Item 2', 'Count', 'sitedate')),
-  datatable(totab2, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Total pounds by category', 
-            options=list(scrollY=300, scroller=TRUE, dom = 'ltp',
-                         columnDefs = list(
-                           list(visible = F, targets = 4), 
-                           list(className = 'dt-left', targets = '_all')
-                           )
-                         ), 
-            colnames = c('Litter Trash', 'Litter Recyclables', 'Debris trash', 'Debris Recyclables', 'sitedate')
-    )
+            colnames = c('Item 1', 'Item 2', 'Count', 'sitedate'))
+datatable(totab2, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Total pounds by category',
+          options=list(scrollY=300, scroller=TRUE, dom = 'ltp',
+                       columnDefs = list(
+                         list(visible = F, targets = 4),
+                         list(className = 'dt-left', targets = '_all')
+                         )
+                       ),
+          colnames = c('Litter Trash', 'Litter Recyclables', 'Debris trash', 'Debris Recyclables', 'sitedate')
   )
-)
 ```
 
 ```{js}
@@ -162,4 +158,4 @@ function filter_default() {
 window.onload = filter_default;
 ```
 
-<script type="text/javascript" src="js/iframeResizer.contentWindow.min.js"></script>
+<!-- <script type="text/javascript" src="js/iframeResizer.contentWindow.min.js"></script> -->
