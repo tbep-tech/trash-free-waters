@@ -83,7 +83,7 @@ bbox <- st_bbox(locstmp) %>%
 
 demcrp <- dem#crop(dem, bbox)
 
-writeRaster(demcrp, here('data/GIS/demcrp.tif'), options=c('TFW=YES'), overwrite = T)
+writeRaster(demcrp, here('T:/05_GIS/TRASH_FREE_WATERS/demcrp.tif'), options=c('TFW=YES'), overwrite = T)
 
 tm_shape(demcrp)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE)+
@@ -92,11 +92,11 @@ tm_shape(demcrp)+
 ##
 # create hillshade
 
-wbt_hillshade(dem = here('data/GIS/demcrp.tif'),
-              output = here('data/GIS/demcrp_hillshade.tif'),
+wbt_hillshade(dem = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp.tif'),
+              output = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_hillshade.tif'),
               azimuth = 115)
 
-hillshade <- raster(here('data/GIS/demcrp_hillshade.tif'))
+hillshade <- raster(here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_hillshade.tif'))
 
 tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
@@ -106,22 +106,22 @@ tm_shape(hillshade)+
 # fill holes
 
 wbt_fill_single_cell_pits(
-  dem = here('data/GIS/demcrp.tif'),
-  output = here('data/GIS/demcrp_nopits.tif')
+  dem = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp.tif'),
+  output = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_nopits.tif')
 )
 
 wbt_breach_depressions_least_cost(
-  dem = here('data/GIS/demcrp_nopits.tif'),
-  output = here('data/GIS/demcrp_breached_nopits.tif'),
+  dem = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_nopits.tif'),
+  output = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_breached_nopits.tif'),
   dist = 5,
   fill = TRUE)
 
 wbt_fill_depressions_wang_and_liu(
-  dem = here('data/GIS/demcrp_breached_nopits.tif'),
-  output = here('data/GIS/demcrp_filled_breached_nopits.tif')
+  dem = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_breached_nopits.tif'),
+  output = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_filled_breached_nopits.tif')
 )
 
-demcrp_filled_breached <- raster(here('data/GIS/demcrp_filled_breached_nopits.tif'))
+demcrp_filled_breached <- raster(here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_filled_breached_nopits.tif'))
 tm_shape(demcrp_filled_breached)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
   tm_scale_bar()
@@ -129,11 +129,11 @@ tm_shape(demcrp_filled_breached)+
 ##
 # create flow accumulation and pointer grid
 
-wbt_d8_flow_accumulation(input = here('data/GIS/demcrp_filled_breached_nopits.tif'),
-                         output = here('data/GIS/D8FA.tif'))
+wbt_d8_flow_accumulation(input = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_filled_breached_nopits.tif'),
+                         output = here('T:/05_GIS/TRASH_FREE_WATERS/D8FA.tif'))
 
-wbt_d8_pointer(dem = here('data/GIS/demcrp_filled_breached_nopits.tif'),
-               output = here('data/GIS/D8pointer.tif'))
+wbt_d8_pointer(dem = here('T:/05_GIS/TRASH_FREE_WATERS/demcrp_filled_breached_nopits.tif'),
+               output = here('T:/05_GIS/TRASH_FREE_WATERS/D8pointer.tif'))
 
 ##
 # create pour points
@@ -141,14 +141,14 @@ wbt_d8_pointer(dem = here('data/GIS/demcrp_filled_breached_nopits.tif'),
 ppointsSP <- locstmp %>% 
   st_transform(crs = crs(dem)) %>% 
   as_Spatial()
-shapefile(ppointsSP, filename = here('data/GIS/pourpoints.shp'), overwrite = TRUE)
+shapefile(ppointsSP, filename = here('T:/05_GIS/TRASH_FREE_WATERS/pourpoints.shp'), overwrite = TRUE)
 
 ##
 # extract streams from raster
 
-wbt_extract_streams(flow_accum = here('data/GIS/D8FA.tif'),
-                    output = here('data/GIS/raster_streams.tif'),
+wbt_extract_streams(flow_accum = here('T:/05_GIS/TRASH_FREE_WATERS/D8FA.tif'),
+                    output = here('T:/05_GIS/TRASH_FREE_WATERS/raster_streams.tif'),
                     threshold = 6000)
 
-raster_streams <- raster(here('data/GIS/raster_streams.tif'))
+raster_streams <- raster(here('T:/05_GIS/TRASH_FREE_WATERS/raster_streams.tif'))
 mapview(raster_streams)
