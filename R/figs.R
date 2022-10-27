@@ -4,7 +4,7 @@ library(reactable)
 library(here)
 library(english)
 library(hrbrthemes)
-# library(showtext)
+library(showtext)
 
 data(tfwdat)
 
@@ -187,14 +187,14 @@ cols <- c('#958984', '#427355', '#00806E', '#004F7E')
 
 p2 <- ggplot(toplo2, aes(x = Site, y = item2)) + 
   geom_tile(aes(fill = cnt), color = 'black') +
-  geom_text(aes(label = round(cnt, 1)), size = 2) + 
+  # geom_text(aes(label = round(cnt, 1)), size = 2) + 
   scale_fill_gradientn(colors = cols) +
-  scale_x_discrete(expand = c(0, 0)) + 
+  scale_x_discrete(expand = c(0, 0), position = 'top') + 
   scale_y_discrete(expand = c(0, 0)) +
   facet_grid(item1 ~Site, scales = 'free', space = 'free', switch = 'y') + 
   theme_bw() + 
   theme(
-    axis.text.x = element_text(angle = 20, hjust = 1, size = 10), 
+    axis.text.x = element_text(angle = 40, hjust = 0, size = 9), 
     panel.grid = element_blank(), 
     strip.placement = 'outside', 
     # legend.position = 'none',
@@ -204,9 +204,9 @@ p2 <- ggplot(toplo2, aes(x = Site, y = item2)) +
   ) + 
   labs(
     y = NULL, 
-    fill = 'Avg cnt / event'
+    fill = 'Avg count\nper event'
   )
 
-jpeg(here('figs/cardplo.jpg'), height = 9, width = 8, family = fml, units = 'in', res = 400)
+jpeg(here('figs/cardplo.jpg'), height = 8, width = 8, family = fml, units = 'in', res = 400)
 print(p2)
 dev.off()

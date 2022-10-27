@@ -123,7 +123,7 @@ tab1 <- tfwdat %>%
   unite('sitedate', Site, Date, sep = ' - ') %>%   
   select(sitedate, dataCards) %>% 
   unnest('dataCards') %>% 
-  arrange(sitedate, item1, item2, itemcnt) %>%
+  arrange(sitedate, -itemcnt) %>%
   select(item1, item2, itemcnt, sitedate)
 tab2 <- tfwdat %>% 
   unite('sitedate', Site, Date, sep = ' - ') %>% 
