@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Site locations",
+    "section": "",
+    "text": "Site last updated 2023-03-01\nThe map shows all of the locations with a litter collection device. Select a site from the table to view the location on the map. The total events indicates the number of dates when litter and debris were collected and enumerated at a site. The total lbs shows the total weight of all items collected for all events at a site.\nAll litter and debris were sampled using the ETAP method. Litter includes items that can be assigned to an ETAP category and debris includes items without a category (usually large, specific items). For each site and date, only a subset of litter and debris is categorized if the total amount collected exceeds two bags. ETAP provides an overview of the ratios of each type of material found at a site, whereas the total weight is the weight of all the litter and debris found in the device at the collection date."
+  },
+  {
+    "objectID": "sites.html",
+    "href": "sites.html",
+    "title": "Site tabular data",
+    "section": "",
+    "text": "These tables show the litter and debris collected at a site for a given date. The first table shows counts by category using the ETAP method and the second table shows the total pounds by category. Note that counts in the first table are from a subset of the total bags collected at a site and date if more than two bags were collected, whereas the total weights in the second table include all the litter and debris collected.\n\n\n\nSelect site and date"
+  },
+  {
+    "objectID": "summaries.html",
+    "href": "summaries.html",
+    "title": "Summaries",
+    "section": "",
+    "text": "TotalsTotals by site\n\n\nThese plots show summaries of the total weight of litter and debris as trash or recyclables that were collected to date for all sites.\n\n\n\n\n\n Download plot\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Download plot\n\n\n\n\n\n\n\n\n\n\n\n\nThis plot shows the type of litter and debris counted at each site and event. The summaries show the total count divided by the number of events at each site, with colors showing the magnitude. Note that reported counts at a site are from a subset of the total bags collected at a site and date if more than two bags were collected. The tables provides an overview of the types and not quantities.\n\n\n\n\n\n Download plot"
+  }
+]
