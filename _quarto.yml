@@ -19,6 +19,7 @@ website:
 
 format:
   html:
+    page-layout: full
     theme: cosmo
     css: styles.css
     code-tools:
