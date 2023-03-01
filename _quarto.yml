@@ -1,0 +1,31 @@
+project:
+  type: website
+
+website:
+  title: "TBEP Trash Free Waters"
+  repo-url: https://github.com/tbep-tech/trash-free-waters
+  page-footer:
+    left: |
+      Website created by Marcus Beck, Sheila Scolaro, and Joe Whalen
+    right: |
+      Additional information at [tbep.org](https://tbep.org/our-work/education/trash-free-waters/){target="_blank"}
+  navbar:
+    logo: tarponlogo.png
+    left:
+      - href: index.qmd
+        text: Site locations
+      - summaries.qmd
+      - sites.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-tools:
+      source: repo
+  pdf:
+    documentclass: scrreprt
+
+execute:
+  echo: false
+  warning: false

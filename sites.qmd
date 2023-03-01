@@ -1,0 +1,62 @@
+---
+title: Site tabular data
+format: html
+editor: source
+
+execute:
+  eval: false
+  warning: false
+  message: false
+  echo: true
+---
+
+```{r}
+library(crosstalk) # use v1.1.1 to remove (All) from table filter selection
+library(DT)
+
+data(tfwdat)
+```
+
+These tables show the litter and debris collected at a site for a given date.  The first table shows counts by category using the [ETAP method]((https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"}) and the second table shows the total pounds by category.  Note that counts in the first table are from a subset of the total bags collected at a site and date if more than two bags were collected, whereas the total weights in the second table include all the litter and debris collected.
+
+```{r}
+tab1 <- tfwdat %>%
+  unite('sitedate', Site, Date, sep = ' - ') %>%   
+  select(sitedate, dataCards) %>% 
+  unnest('dataCards') %>% 
+  arrange(sitedate, -itemcnt) %>%
+  select(item1, item2, itemcnt, sitedate)
+tab2 <- tfwdat %>% 
+  unite('sitedate', Site, Date, sep = ' - ') %>% 
+  select(LitterTrashWeightLb, LitterRecyclablesWeightLb, DebrisTrashWeightLb, DebrisRecyclablesWeightLb, sitedate)
+totab1 <- SharedData$new(tab1, ~sitedate, group = 'choose site date')
+totab2 <- SharedData$new(tab2, ~sitedate, group = 'choose site date')
+
+filter_select(id = "filter1", label = "Select site and date", sharedData = totab1, group = ~sitedate, multiple = F)#,
+datatable(totab1, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Items found', 
+            options=list(scrollY=400, scroller=TRUE,
+                         columnDefs = list(
+                           list(visible = F, targets = 3),
+                           list(className = 'dt-left', targets = '_all')
+                           )
+                         ), 
+            colnames = c('Item 1', 'Item 2', 'Count', 'sitedate'))
+datatable(totab2, extensions = "Scroller", style = "bootstrap", class = "compact", width="100%", rownames = F, caption = 'Total pounds by category',
+          options=list(scrollY=300, scroller=TRUE, dom = 'ltp',
+                       columnDefs = list(
+                         list(visible = F, targets = 4),
+                         list(className = 'dt-left', targets = '_all')
+                         )
+                       ),
+          colnames = c('Litter Trash', 'Litter Recyclables', 'Debris trash', 'Debris Recyclables', 'sitedate')
+  )
+```
+
+```{js}
+function filter_default() {
+    document.getElementById("filter1").getElementsByClassName("selectized")[0].selectize.setValue("HC_SB_Cotanchobee - 2021-06-29", false);
+}
+window.onload = filter_default;
+```
+
+<!-- <script type="text/javascript" src="js/iframeResizer.contentWindow.min.js"></script> -->

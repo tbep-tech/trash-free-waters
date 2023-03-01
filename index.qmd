@@ -1,0 +1,34 @@
+---
+title: Site locations
+format: html
+editor: source
+
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(leaflet)
+library(crosstalk) # use v1.1.1 to remove (All) from table filter selection
+library(DT)
+
+data(tfwdat)
+data(locs)
+
+source(here('R/funcs.R'))
+```
+
+*Site last updated `r Sys.Date()`*
+
+The map shows all of the locations with a litter collection device.  Select a site from the table to view the location on the map.  The total events indicates the number of dates when litter and debris were collected and enumerated at a site.  The total lbs shows the total weight of all items collected for all events at a site.  
+
+All litter and debris were sampled using the [ETAP method]((https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"}). Litter includes items that can be assigned to an ETAP category and debris includes items without a category (usually large, specific items).  For each site and date, only a subset of litter and debris is categorized if the total amount collected exceeds two bags. ETAP provides an overview of the ratios of each type of material found at a site, whereas the total weight is the weight of all the litter and debris found in the device at the collection date.
+
+```{r}
+map_fun(locs, tfwdat)
+```

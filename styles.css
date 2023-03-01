@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@600;700&display=swap');
 
 /* Frutiger Light approximate */
-@import url("//fonts.googleapis.com/css?family=Lato:100,300,500,700,900"); 
+@import url("https://fonts.googleapis.com/css?family=Lato:100,300,500,700,900"); 
 
 /* DIN condensed approximate */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
@@ -27,6 +27,10 @@ h1{
 h2,h3,h4,h5 {
   font-family: 'Lato';
   font-weight: 800;
+  color: #00806E
+}
+
+.header-section-number {
   color: #00806E
 }
 
@@ -72,6 +76,18 @@ h2,h3,h4,h5 {
 } 
 
 /* sub sections */
+
+.level1 {
+  font-family: 'Roboto';
+  font-weight: 300;
+  color: #958984;
+}
+
+.level2 {
+  font-family: 'Roboto';
+  font-weight: 300;
+  color: #958984;
+}
 
 .level3 {
   font-family: 'Roboto';
