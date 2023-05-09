@@ -18,7 +18,7 @@ library(DT)
 data(tfwdat)
 ```
 
-These tables show the litter and debris collected at a site for a given date.  The first table shows counts by category using the [ETAP method](https://www.epa.gov/system/files/documents/2021-09/revised_final_etap_june2021.pdf){target="_blank"} and the second table shows the total pounds by category.  Note that counts in the first table are from a subset of the total bags collected at a site and date if more than two bags were collected, whereas the total weights in the second table include all the litter and debris collected.
+These tables show the litter and debris collected at a site for a given date.  The first table shows counts by category using the [ETAP method](https://drive.google.com/file/d/1i3gZexjtkL_-EIIKZIEzkCO5d3firtFm/view){target="_blank"} and the second table shows the total pounds by category.  Note that counts in the first table are from a subset of the total bags collected at a site and date if more than two bags were collected, whereas the total weights in the second table include all the litter and debris collected.
 
 ```{r}
 tab1 <- tfwdat %>%
